@@ -33,11 +33,6 @@ class GraphAttentionLayer(nn.Module):
         attention = F.softmax(attention, dim=1)
         attention = F.dropout(attention, self.dropout, training=self.training)
 
-        # #--------------
-        # import pandas as pd
-        # df = pd.DataFrame(attention[0:51,0:51].detach().cpu().numpy())
-        # df.to_csv(f'./res/adj.csv',index= False)
-        # #--------------
 
 
         h_prime = torch.matmul(attention, Wh)
@@ -73,10 +68,7 @@ class GAT(nn.Module):
         """one heads GAT."""
         super(GAT, self).__init__()
         self.dropout = dropout
-        # self.nhead = nheads
-        # self.attentions = [GraphAttentionLayer(nfeat, nhid, dropout=dropout, alpha=alpha, concat=True) for _ in range(nheads)]
-        # for i, attention in enumerate(self.attentions):
-        #     self.add_module('attention_{}'.format(i), attention)
+
 
         self.out_att = GraphAttentionLayer(nfeat, nout, dropout=dropout, alpha=alpha, concat=concat)
         self.concat = concat

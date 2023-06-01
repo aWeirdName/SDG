@@ -117,11 +117,7 @@ class SDG(nn.Module):
     def get_d_graph(self, emb, sigma = 1):
         emb = self.lin(emb)
         learned_graph = cosin_sim(emb)
-        # emb = emb.T
-        # dis = distance(emb, emb)
-        # learned_graph = torch.exp(- dis / (2 * sigma**2)) 
-        # learned_graph = (learned_graph + learned_graph.T)/2
-        #gumbel mat
+
         learned_graph = torch.stack([learned_graph, 1-learned_graph], dim=-1)
         adj = torch.nn.functional.gumbel_softmax(learned_graph, tau=10, hard=True)
         adj = adj[:, :, 0].clone().reshape(self.node_num * self.batch_size , -1)
@@ -167,13 +163,7 @@ class SDG(nn.Module):
 
         #mix up----------------------------------------------------
         self.emb = self.Emb_S + 0.01*self.Emb_D
-        #self.GAT2(torch.cat((self.Emb_S ,self.Emb_D), dim=1), self.Dynamic_graph)
-        # emb = torch.cat((self.Emb_S,self.Emb_D), dim=1) #
-        # emb = self.tran(emb) #
 
-        # w = torch.cat((emb_for_batch, D), dim=1) #
-        # w = self.tran1(w)   #   
-        # w = w.view(batch_num, node_num, -1) #
 
         #forcasting------------------------------------------------
         out = self.emb.view(batch_num, node_num, -1)
